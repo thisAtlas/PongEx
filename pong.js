@@ -1,0 +1,6 @@
+
+
+function onload() {
+    "use strict";
+    
+}
