@@ -21,26 +21,30 @@ function onload() {
 }
 
 function settings() {
-    PWidth = canvas.width/250; 
-    PHeight = canvas.height/10;
+    "use strict";
+    PWidth = canvas.width / 250;
+    PHeight = canvas.height / 10;
     
-    xPadding = canvas.width/40
+    xPadding = canvas.width / 40;
     
     playerYPos = (canvas.height / 2) - (PHeight / 2);
     AIYPos = (canvas.height / 2) - (PHeight / 2);
 }
 
 function gameloop() {
+    "use strict";
     //clears canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     drawPaddle(xPadding, playerYPos, PWidth, PHeight);
     drawPaddle(canvas.width - xPadding - PWidth, AIYPos, PWidth, PHeight);
     
-    requestAnimationFrame(draw);
+    console.log("gameloop run")
+    requestAnimationFrame(gameloop);
 }
 
 function drawPaddle(cornerx, cornery, width, height) {
+    "use strict";
     ctx.beginPath();
     ctx.rect(cornerx, cornery, width, height);
     ctx.fillStyle = "#eeeeee";
