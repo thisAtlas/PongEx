@@ -3,13 +3,17 @@
 var canvas;
 var ctx;
 //paddle variables
-var PWidth;     //Paddle width.
-var PHeight;    //Paddle height.
+var pWidth;     //Paddle width.
+var pHeight;    //Paddle height.
 
 var xPadding;   //padding (distance from) on the x-axis.
 
-var playerYPos;
-var AIYPos;
+var p1YPos;
+var p2YPos;
+
+var ballx;
+var bally;
+var ballSize;
 
 function onload() {
     "use strict";
@@ -22,13 +26,17 @@ function onload() {
 
 function settings() {
     "use strict";
-    PWidth = canvas.width / 250;
-    PHeight = canvas.height / 10;
+    pWidth = canvas.width / 250;
+    pHeight = canvas.height / 10;
     
     xPadding = canvas.width / 40;
     
-    playerYPos = (canvas.height / 2) - (PHeight / 2);
-    AIYPos = (canvas.height / 2) - (PHeight / 2);
+    p1YPos = (canvas.height / 2) - (pHeight / 2);
+    p2YPos = (canvas.height / 2) - (pHeight / 2);
+    
+    ballSize = pWidth; //Same size as the width of the paddles.
+    ballx = (canvas.width / 2);
+    bally = (canvas.height / 2)
 }
 
 function gameloop() {
@@ -36,17 +44,19 @@ function gameloop() {
     //clears canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    drawPaddle(xPadding, playerYPos, PWidth, PHeight);
-    drawPaddle(canvas.width - xPadding - PWidth, AIYPos, PWidth, PHeight);
+    drawRect(xPadding, p1YPos, pWidth, pHeight); //Player1Paddle
+    drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
+    drawRect(ballx, bally, ballSize, ballSize); //Ball
     
-    console.log("gameloop run")
+    
     requestAnimationFrame(gameloop);
 }
 
-function drawPaddle(cornerx, cornery, width, height) {
+function drawRect(cornerx, cornery, width, height) {
     "use strict";
     ctx.beginPath();
     ctx.rect(cornerx, cornery, width, height);
     ctx.fillStyle = "#eeeeee";
     ctx.fill();
 }
+
