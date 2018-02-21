@@ -39,6 +39,7 @@ function settings() {
     ballSize = pWidth; //Same size as the width of the paddles.
     ballx = (canvas.width / 2);
     bally = (canvas.height / 2);
+    
 }
 
 function resizeCanvas() {
@@ -50,6 +51,8 @@ function resizeCanvas() {
     //Draws canvas background in side window
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
+    
+    settings(); //Runs settings again to update sizes of objects.
 }
 
 function gameloop() {
@@ -59,7 +62,9 @@ function gameloop() {
     
     drawRect(xPadding, p1YPos, pWidth, pHeight); //Player1Paddle
     drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
-    drawRect(ballx, bally, ballSize, ballSize); //Ball
+    drawRect(ballx - (ballSize / 2), bally - (ballSize / 2), ballSize, ballSize); //Ball
+    
+    drawLine();
     
     requestAnimationFrame(gameloop);
 }
@@ -72,3 +77,11 @@ function drawRect(cornerx, cornery, width, height) {
     ctx.fill();
 }
 
+function drawLine() {
+    ctx.setLineDash([12, 12]);
+    ctx.beginPath();
+    ctx.strokeStyle = '#eeeeee';
+    ctx.moveTo(canvas.width / 2, 0);
+    ctx.lineTo(canvas.width / 2, canvas.height);
+    ctx.stroke();
+}
