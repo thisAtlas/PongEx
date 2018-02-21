@@ -64,7 +64,7 @@ function gameloop() {
     drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
     drawRect(ballx - (ballSize / 2), bally - (ballSize / 2), ballSize, ballSize); //Ball
     
-    drawLine();
+    drawLine(12, 12, (canvas.width / 2), 0, (canvas.width / 2), canvas.height);
     
     requestAnimationFrame(gameloop);
 }
@@ -77,11 +77,11 @@ function drawRect(cornerx, cornery, width, height) {
     ctx.fill();
 }
 
-function drawLine() {
-    ctx.setLineDash([12, 12]);
+function drawLine(dash, space, x1, y1, x2, y2) {
+    ctx.setLineDash([dash, space]);
     ctx.beginPath();
     ctx.strokeStyle = '#eeeeee';
-    ctx.moveTo(canvas.width / 2, 0);
-    ctx.lineTo(canvas.width / 2, canvas.height);
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
     ctx.stroke();
 }
