@@ -96,8 +96,10 @@ function drawLine(dash, space, x1, y1, x2, y2) {
     ctx.stroke();
 }
 
+function drawText(text, x, y, rightAlign) {
     "use strict";
     ctx.font = '40px Nova Square';
+    if (rightAlign === true) {
         var textSize = ctx.measureText(text).width;
         ctx.fillText(text, x - textSize, y);
     } else {
