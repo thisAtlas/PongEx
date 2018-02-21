@@ -4,16 +4,17 @@ var ctx;
 //paddle variables
 var pWidth;     //Paddle width.
 var pHeight;    //Paddle height.
-var xPadding;   //padding (distance from) on the x-axis.
+var xPadding;   //Padding (distance from) on the x-axis.
 var p1YPos;     //Paddle #1 Y position.
 var p2YPos;     //Paddle #2 Y position.
 //ball variables
-var ballx;
-var bally;
-var ballSize;
+var ballx;      //Ball x position.
+var bally;      //Ball y position.
+var ballSize;   //Ball size (side length).
 //score
 var score1;
 var score2;
+var fontSize;
 
 function onload() {
     "use strict";
@@ -39,7 +40,7 @@ function settings() {
     p1YPos = (canvas.height / 2) - (pHeight / 2);
     p2YPos = (canvas.height / 2) - (pHeight / 2);
     
-    ballSize = pWidth; //Same size as the width of the paddles.
+    ballSize = pWidth * 1.2; //1.2 times the width of the paddle.
     ballx = (canvas.width / 2);
     bally = (canvas.height / 2);
     
@@ -89,9 +90,11 @@ function drawLine(dash, space, x1, y1, x2, y2) {
     ctx.stroke();
 }
 
-function drawText(text, x, y, rightAlign) {
+function drawText(text, x, y, ratio, rightAlign) {
     "use strict";
-    ctx.font = '40px Nova Square';
+     fontSize = canvas.height / ratio;
+    
+    ctx.font = fontSize + 'px Nova Square';
     if (rightAlign === true) {
         var textSize = ctx.measureText(text).width;
         ctx.fillText(text, x - textSize, y);
@@ -108,7 +111,7 @@ function draw() {
     
     drawLine(12, 12, (canvas.width / 2), 0, (canvas.width / 2), canvas.height); //Vertical line
     
-    drawText(score1, canvas.width * 0.98 / 2, 10 + canvas.height * 0.05, true); //player1 score
-    drawText(score2, canvas.width * 1.02 / 2, 10 + canvas.height * 0.05, false); //player2 score
+    drawText(score1, canvas.width * 0.98 / 2, 10 + canvas.height * 0.05, 25, true); //player1 score
+    drawText(score2, canvas.width * 1.02 / 2, 10 + canvas.height * 0.05, 25, false); //player2 score
     
 }
