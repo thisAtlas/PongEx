@@ -11,6 +11,9 @@ var p2YPos;     //Paddle #2 Y position.
 var ballx;
 var bally;
 var ballSize;
+//score
+var score1;
+var score2;
 
 function onload() {
     "use strict";
@@ -19,7 +22,7 @@ function onload() {
     canvas.width = window.innerWidth;   //Sets canvas size to window size.
     canvas.height = window.innerHeight; // ^.
     
-    window.addEventListener('resize', resizeCanvas, false) //EventListener for 'resize' of window. Runs resizeCanvas(). 
+    window.addEventListener('resize', resizeCanvas, false); //EventListener for 'resize' of window. Runs resizeCanvas(). 
     resizeCanvas();
     
     settings();
@@ -39,6 +42,9 @@ function settings() {
     ballSize = pWidth; //Same size as the width of the paddles.
     ballx = (canvas.width / 2);
     bally = (canvas.height / 2);
+    
+    score1 = 0;
+    score2 = 0;
     
 }
 
@@ -66,6 +72,9 @@ function gameloop() {
     
     drawLine(12, 12, (canvas.width / 2), 0, (canvas.width / 2), canvas.height);
     
+    drawText(score1, canvas.width * 0.98 / 2, 10 + canvas.height * 0.05, true);
+    drawText(score2, canvas.width * 1.02 / 2, 10 + canvas.height * 0.05, false);
+    
     requestAnimationFrame(gameloop);
 }
 
@@ -78,10 +87,20 @@ function drawRect(cornerx, cornery, width, height) {
 }
 
 function drawLine(dash, space, x1, y1, x2, y2) {
+    "use strict";
     ctx.setLineDash([dash, space]);
     ctx.beginPath();
     ctx.strokeStyle = '#eeeeee';
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.stroke();
+}
+
+    "use strict";
+    ctx.font = '40px Nova Square';
+        var textSize = ctx.measureText(text).width;
+        ctx.fillText(text, x - textSize, y);
+    } else {
+        ctx.fillText(text, x, y);
+    }
 }
