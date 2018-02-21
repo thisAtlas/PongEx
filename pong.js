@@ -66,14 +66,7 @@ function gameloop() {
     //clears canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    drawRect(xPadding, p1YPos, pWidth, pHeight); //Player1Paddle
-    drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
-    drawRect(ballx - (ballSize / 2), bally - (ballSize / 2), ballSize, ballSize); //Ball
-    
-    drawLine(12, 12, (canvas.width / 2), 0, (canvas.width / 2), canvas.height);
-    
-    drawText(score1, canvas.width * 0.98 / 2, 10 + canvas.height * 0.05, true);
-    drawText(score2, canvas.width * 1.02 / 2, 10 + canvas.height * 0.05, false);
+    draw();
     
     requestAnimationFrame(gameloop);
 }
@@ -105,4 +98,17 @@ function drawText(text, x, y, rightAlign) {
     } else {
         ctx.fillText(text, x, y);
     }
+}
+
+function draw() {
+    "use strict";
+    drawRect(xPadding, p1YPos, pWidth, pHeight); //Player1Paddle
+    drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
+    drawRect(ballx - (ballSize / 2), bally - (ballSize / 2), ballSize, ballSize); //Ball
+    
+    drawLine(12, 12, (canvas.width / 2), 0, (canvas.width / 2), canvas.height); //Vertical line
+    
+    drawText(score1, canvas.width * 0.98 / 2, 10 + canvas.height * 0.05, true); //player1 score
+    drawText(score2, canvas.width * 1.02 / 2, 10 + canvas.height * 0.05, false); //player2 score
+    
 }
