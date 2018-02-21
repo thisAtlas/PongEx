@@ -1,3 +1,5 @@
+"use strict";
+
 //List of global variables used throughout the code. Most are simply declared, then later adjusted in settings().
 var canvas;
 var ctx;
@@ -17,7 +19,6 @@ var score2;
 var fontSize;
 
 function onload() {
-    "use strict";
     canvas = document.getElementById("canvas");    //Saves ref. to id:canvas in var
     ctx = canvas.getContext('2d');      //Creates a "CanvasRenderingContext2D"-object
     canvas.width = window.innerWidth;   //Sets canvas size to window size.
@@ -31,7 +32,6 @@ function onload() {
 }
 
 function settings() {
-    "use strict";
     pWidth = canvas.width / 250;
     pHeight = canvas.height / 10;
     
@@ -50,7 +50,6 @@ function settings() {
 }
 
 function resizeCanvas() {
-    "use strict";
     //Fetches window size and updates canvas dimension variables.
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -63,7 +62,6 @@ function resizeCanvas() {
 }
 
 function gameloop() {
-    "use strict";
     //clears canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
@@ -73,7 +71,6 @@ function gameloop() {
 }
 
 function drawRect(cornerx, cornery, width, height) {
-    "use strict";
     ctx.beginPath();
     ctx.rect(cornerx, cornery, width, height);
     ctx.fillStyle = "#eeeeee";
@@ -81,7 +78,6 @@ function drawRect(cornerx, cornery, width, height) {
 }
 
 function drawLine(dash, space, x1, y1, x2, y2) {
-    "use strict";
     ctx.setLineDash([dash, space]);
     ctx.beginPath();
     ctx.strokeStyle = '#eeeeee';
@@ -91,7 +87,6 @@ function drawLine(dash, space, x1, y1, x2, y2) {
 }
 
 function drawText(text, x, y, ratio, rightAlign) {
-    "use strict";
      fontSize = canvas.height / ratio;
     
     ctx.font = fontSize + 'px Nova Square';
@@ -104,7 +99,6 @@ function drawText(text, x, y, ratio, rightAlign) {
 }
 
 function draw() {
-    "use strict";
     drawRect(xPadding, p1YPos, pWidth, pHeight); //Player1Paddle
     drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
     drawRect(ballx - (ballSize / 2), bally - (ballSize / 2), ballSize, ballSize); //Ball
