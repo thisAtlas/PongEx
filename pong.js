@@ -11,6 +11,8 @@ var p2YPos;     //Paddle #2 Y position.
 var ballx;      //Ball x position.
 var bally;      //Ball y position.
 var ballSize;   //Ball size (side length).
+var ballXSpeed; //Speed of ball on x-axis.
+var ballYSpeed; //Speed of ball on y-axis.
 //score
 var score1;
 var score2;
@@ -68,6 +70,8 @@ function gameloop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     draw();
+    //collision
+    //wincheck
     
     requestAnimationFrame(gameloop);
 }
@@ -92,12 +96,16 @@ function drawLine(dash, space, x1, y1, x2, y2) {
 
 function drawText(text, x, y, ratio, rightAlign) {
     "use strict";
-     fontSize = canvas.height / ratio;
+    fontSize = canvas.height / ratio;
+    
+    var textHeight = ctx.measureText('M').width, //The letter M is almost square so one can approximate the height of the text.
+        textWidth = ctx.measureText(text).width;
+    
+    y = y + textHeight;
     
     ctx.font = fontSize + 'px Nova Square';
     if (rightAlign === true) {
-        var textSize = ctx.measureText(text).width;
-        ctx.fillText(text, x - textSize, y);
+        ctx.fillText(text, x - textWidth, y);
     } else {
         ctx.fillText(text, x, y);
     }
@@ -111,7 +119,6 @@ function draw() {
     
     drawLine(12, 12, (canvas.width / 2), 0, (canvas.width / 2), canvas.height); //Vertical line
     
-    drawText(score1, canvas.width * 0.98 / 2, 10 + canvas.height * 0.05, 25, true); //player1 score
-    drawText(score2, canvas.width * 1.02 / 2, 10 + canvas.height * 0.05, 25, false); //player2 score
-    
+    drawText(score1, canvas.width * 0.98 / 2, canvas.height / 100, 15, true); //player1 score
+    drawText(score2, canvas.width * 1.02 / 2, canvas.height / 100, 15, false); //player2 score
 }
