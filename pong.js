@@ -11,8 +11,8 @@ var p2YPos;     //Paddle #2 Y position.
 var ballX;      //Ball x position.
 var ballY;      //Ball y position.
 var ballSize;   //Ball size (side length).
-var ballXSpeed = 1; //Speed of ball on x-axis.
-var ballYSpeed = -1; //Speed of ball on y-axis.
+var ballXSpeed = 2.5; //Speed of ball on x-axis.
+var ballYSpeed = -2.5; //Speed of ball on y-axis.
 //score
 var score1;
 var score2;
@@ -52,7 +52,6 @@ function variableSettings() {
     xPadding = canvas.width / 100;
     
     ballSize = pWidth * 1.2; //1.2 times the width of the paddle.
-    
 }
 
 function resizeCanvas() {
@@ -132,6 +131,14 @@ function ballMove() {
     "use strict";
     ballX += ballXSpeed;
     ballY += ballYSpeed;
+    
+    if (ballY <= 0 || ballY + ballSize >= canvas.height) {
+        ballYSpeed = -ballYSpeed;
+    }
+    if (ballX <= 0 || ballX + ballSize >= canvas.width) {
+        //ballXSpeed = -ballXSpeed; //POC: Ball Bounce on all four walls, not just vertically.
+        
+    }
 }
 
 function move() {
