@@ -1,22 +1,22 @@
 //List of global variables used throughout the code. Most are simply declared, then later adjusted in settings().
-var canvas;
-var ctx;
+var canvas,
+    ctx;
 //paddle variables
-var pWidth;     //Paddle width.
-var pHeight;    //Paddle height.
-var xPadding;   //Padding (distance from) on the x-axis.
-var p1YPos;     //Paddle #1 Y position.
-var p2YPos;     //Paddle #2 Y position.
+var pWidth,     //Paddle width.
+    pHeight,    //Paddle height.
+    xPadding,   //Padding (distance from) on the x-axis.
+    p1YPos,     //Paddle #1 Y position.
+    p2YPos;     //Paddle #2 Y position.
 //ball variables
-var ballX;      //Ball x position.
-var ballY;      //Ball y position.
-var ballSize;   //Ball size (side length).
-var ballXSpeed = 2.5; //Speed of ball on x-axis.
-var ballYSpeed = -2.5; //Speed of ball on y-axis.
-//score
-var score1;
-var score2;
-var fontSize;
+var ballX,              //Ball x position.
+    ballY,              //Ball y position.
+    ballSize,           //Ball size (side length).
+    ballXSpeed = 2.5,   //Speed of ball on x-axis.
+    ballYSpeed = -2.5;  //Speed of ball on y-axis.
+//score and text variables
+var score1,
+    score2,
+    fontSize;
 
 function onload() {
     "use strict";
@@ -25,8 +25,9 @@ function onload() {
     canvas.width = window.innerWidth;   //Sets canvas size to window size.
     canvas.height = window.innerHeight; // ^.
     
-    window.addEventListener('resize', resizeCanvas, false); //EventListener for 'resize' of window. Runs resizeCanvas(). 
     resizeCanvas();
+    window.addEventListener('resize', resizeCanvas, false); //EventListener for 'resize' of window. Runs resizeCanvas(). 
+    
     
     defaultSettings();
     variableSettings();
