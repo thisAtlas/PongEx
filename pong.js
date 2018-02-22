@@ -8,11 +8,11 @@ var xPadding;   //Padding (distance from) on the x-axis.
 var p1YPos;     //Paddle #1 Y position.
 var p2YPos;     //Paddle #2 Y position.
 //ball variables
-var ballx;      //Ball x position.
-var bally;      //Ball y position.
+var ballX;      //Ball x position.
+var ballY;      //Ball y position.
 var ballSize;   //Ball size (side length).
-var ballXSpeed; //Speed of ball on x-axis.
-var ballYSpeed; //Speed of ball on y-axis.
+var ballXSpeed = 1; //Speed of ball on x-axis.
+var ballYSpeed = -1; //Speed of ball on y-axis.
 //score
 var score1;
 var score2;
@@ -28,26 +28,30 @@ function onload() {
     window.addEventListener('resize', resizeCanvas, false); //EventListener for 'resize' of window. Runs resizeCanvas(). 
     resizeCanvas();
     
-    settings();
+    defaultSettings();
+    variableSettings();
     gameloop();
 }
 
-function settings() {
+function defaultSettings() {
     "use strict";
+    p1YPos = (canvas.height / 2) - (pHeight / 2);
+    p2YPos = (canvas.height / 2) - (pHeight / 2);
+    
+    ballX = (canvas.width / 2);
+    ballY = (canvas.height / 2);
+    
+    score1 = 0;
+    score2 = 0;
+}
+
+function variableSettings() {
     pWidth = canvas.width / 250;
     pHeight = canvas.height / 10;
     
     xPadding = canvas.width / 100;
     
-    p1YPos = (canvas.height / 2) - (pHeight / 2);
-    p2YPos = (canvas.height / 2) - (pHeight / 2);
-    
     ballSize = pWidth * 1.2; //1.2 times the width of the paddle.
-    ballx = (canvas.width / 2);
-    bally = (canvas.height / 2);
-    
-    score1 = 0;
-    score2 = 0;
     
 }
 
@@ -61,7 +65,7 @@ function resizeCanvas() {
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     
-    settings(); //Runs settings again to update sizes of objects.
+    variableSettings(); //Runs settings again to update sizes of objects.
 }
 
 function gameloop() {
@@ -70,6 +74,7 @@ function gameloop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     draw();
+    move();
     //collision
     //wincheck
     
@@ -115,10 +120,21 @@ function draw() {
     "use strict";
     drawRect(xPadding, p1YPos, pWidth, pHeight); //Player1Paddle
     drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
-    drawRect(ballx - (ballSize / 2), bally - (ballSize / 2), ballSize, ballSize); //Ball
+    drawRect(ballX - (ballSize / 2), ballY - (ballSize / 2), ballSize, ballSize); //Ball
     
     drawLine(12, 12, (canvas.width / 2), 0, (canvas.width / 2), canvas.height); //Vertical line
     
     drawText(score1, canvas.width * 0.98 / 2, canvas.height / 100, 15, true); //player1 score
     drawText(score2, canvas.width * 1.02 / 2, canvas.height / 100, 15, false); //player2 score
+}
+
+function ballMove() {
+    "use strict";
+    ballX += ballXSpeed;
+    ballY += ballYSpeed;
+}
+
+function move() {
+    "use strict";
+    ballMove();
 }
