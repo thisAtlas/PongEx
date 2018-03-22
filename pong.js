@@ -1,26 +1,26 @@
 //List of global variables used throughout the code. Most are simply declared, then later adjusted in settings().
 var canvas,
-    ctx;
+    ctx,
 //paddle variables
-var pWidth,         //Paddle width.
+    pWidth,         //Paddle width.
     pHeight,        //Paddle height.
     xPadding,       //Padding (distance from) on the x-axis.
     p1YPos,         //Paddle #1 Y position.
-    p2YPos;         //Paddle #2 Y position.
+    p2YPos,         //Paddle #2 Y position.
 //ball variables
-var ballX,          //Ball x position.
+    ballX,          //Ball x position.
     ballY,          //Ball y position.
     ballSize,       //Ball size (side length).
     ballXSpeed,     //Speed of ball on x-axis.
-    ballYSpeed;     //Speed of ball on y-axis.
+    ballYSpeed,     //Speed of ball on y-axis.
 //score and text variables
-var score1,
+    score1,
     score2,
-    fontSize;
-//
-var press1Text,
+    fontSize,
+    press1Text,
     press2Text,
-    player1Instructions;
+    player1Instructions,
+    player2Instructions;
 
 function onload() {
     "use strict";
@@ -29,21 +29,23 @@ function onload() {
     canvas.width = window.innerWidth;   //Sets canvas size to window size.
     canvas.height = window.innerHeight; // ^.
     
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas, false); //EventListener for 'resize' of window. Runs resizeCanvas(). 
-    
-    
     defaultSettings();
     variableSettings();
+    resizeCanvas();
+    
+    window.addEventListener('resize', resizeCanvas, false); //EventListener for 'resize' of window. Runs resizeCanvas(). 
     
     startMenu();
-    //gameloop();
-    
-    console.log('onload() run');
 }
 
 function defaultSettings() {
     "use strict";
+    
+    press1Text = "Press '1' for singleplayer.";
+    press2Text = "Press '2' for multiplayer.";
+    player1Instructions = "'W' to move up, 'S' to move down";
+    player2Instructions = "'Arrow-up' to move up, 'Arrow-down' to move down";
+    
     p1YPos = (canvas.height / 2) - (pHeight / 2);
     p2YPos = (canvas.height / 2) - (pHeight / 2);
     
@@ -82,28 +84,16 @@ function resizeCanvas() {
 
 function startMenu() {
     "use strict";
-    draw(); 
-    /* Bug: Første gang drawText kører placerer den ikke tekst
-     * rigtigt. Ved anden drawText virker det, så draw() køres en gang
-     * før canvas bliver cleared, for at undgå det problem.
-     */
+    draw();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     draw();
-    
-    press1Text = "Press '1' for singleplayer.";
-    press2Text = "Press '2' for multiplayer.";
-    player1Instructions = "'W' to move up 'S' to move down";
-    
-    //Samme bug som før. Right-align virker ikke.
-    drawText(press1Text, canvas.width / 15, canvas.height / 10, 25, false);
-    drawText(press2Text, canvas.width - canvas.width / 15, canvas.height / 10, 25, true);
+    drawInfo();
     
     
     //console.log('startMenu run');
     
     requestAnimationFrame(startMenu);
-    
 }
 
 function gameloop() {
@@ -113,8 +103,7 @@ function gameloop() {
     
     draw();
     move();
-    //collision
-    //wincheck
+    //wincheck();
     
     requestAnimationFrame(gameloop);
 }
@@ -141,19 +130,22 @@ function drawText(text, x, y, ratio, rightAlign) {
     "use strict";
     fontSize = canvas.height / ratio;
     
-    var textHeight = ctx.measureText('M').width, //The letter M is almost square so one can approximate the height of the text.
+    var textHeight = fontSize,
         textWidth = ctx.measureText(text).width;
     
-    console.log("W: " + textWidth + " H: " + textHeight);
-    
-    y = y + textHeight;
-    
     ctx.font = fontSize + 'px Nova Square';
-    if (rightAlign === true) {
-        ctx.fillText(text, x - textWidth, y);
+    
+    if (rightAlign === false) {
+        ctx.fillText(text, x, y + textHeight);
     } else {
-        ctx.fillText(text, x, y);
+        ctx.fillText(text, x - textWidth, y + textHeight);
     }
+}
+
+function drawInfo() {
+    "use strict";
+    drawText(press1Text, canvas.width / 15, canvas.height / 10, 40, false);
+    drawText(press2Text, canvas.width - canvas.width / 15, canvas.height / 10, 40, true);
 }
 
 function draw() {
@@ -176,10 +168,10 @@ function ballMove() {
     if (ballY <= 0 || ballY + ballSize >= canvas.height) {
         ballYSpeed = -ballYSpeed;
     }
-    if (ballX <= 0 || ballX + ballSize >= canvas.width) {
-        //ballXSpeed = -ballXSpeed; //POC: Ball Bounce on all four walls, not just vertically.
+    /*if (ballX <= 0 || ballX + ballSize >= canvas.width) {
+        ballXSpeed = -ballXSpeed; //POC: Ball Bounce on all four walls, not just vertically.
         
-    }
+    }*/
 }
 
 function move() {
