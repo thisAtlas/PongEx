@@ -2,21 +2,25 @@
 var canvas,
     ctx;
 //paddle variables
-var pWidth,     //Paddle width.
-    pHeight,    //Paddle height.
-    xPadding,   //Padding (distance from) on the x-axis.
-    p1YPos,     //Paddle #1 Y position.
-    p2YPos;     //Paddle #2 Y position.
+var pWidth,         //Paddle width.
+    pHeight,        //Paddle height.
+    xPadding,       //Padding (distance from) on the x-axis.
+    p1YPos,         //Paddle #1 Y position.
+    p2YPos;         //Paddle #2 Y position.
 //ball variables
-var ballX,              //Ball x position.
-    ballY,              //Ball y position.
-    ballSize,           //Ball size (side length).
-    ballXSpeed = 2.5,   //Speed of ball on x-axis.
-    ballYSpeed = -2.5;  //Speed of ball on y-axis.
+var ballX,          //Ball x position.
+    ballY,          //Ball y position.
+    ballSize,       //Ball size (side length).
+    ballXSpeed,     //Speed of ball on x-axis.
+    ballYSpeed;     //Speed of ball on y-axis.
 //score and text variables
 var score1,
     score2,
     fontSize;
+//
+var press1Text,
+    press2Text,
+    player1Instructions;
 
 function onload() {
     "use strict";
@@ -31,7 +35,11 @@ function onload() {
     
     defaultSettings();
     variableSettings();
-    gameloop();
+    
+    startMenu();
+    //gameloop();
+    
+    console.log('onload() run');
 }
 
 function defaultSettings() {
@@ -42,11 +50,15 @@ function defaultSettings() {
     ballX = (canvas.width / 2);
     ballY = (canvas.height / 2);
     
-    score1 = 0;
-    score2 = 0;
+    score1 = 1;
+    score2 = 2;
+    
+    ballXSpeed = 2.5;
+    ballYSpeed = -2.5;
 }
 
 function variableSettings() {
+    "use strict";
     pWidth = canvas.width / 250;
     pHeight = canvas.height / 10;
     
@@ -66,6 +78,32 @@ function resizeCanvas() {
     ctx.rect(0, 0, canvas.width, canvas.height);
     
     variableSettings(); //Runs settings again to update sizes of objects.
+}
+
+function startMenu() {
+    "use strict";
+    draw(); 
+    /* Bug: Første gang drawText kører placerer den ikke tekst
+     * rigtigt. Ved anden drawText virker det, så draw() køres en gang
+     * før canvas bliver cleared, for at undgå det problem.
+     */
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    draw();
+    
+    press1Text = "Press '1' for singleplayer.";
+    press2Text = "Press '2' for multiplayer.";
+    player1Instructions = "'W' to move up 'S' to move down";
+    
+    //Samme bug som før. Right-align virker ikke.
+    drawText(press1Text, canvas.width / 15, canvas.height / 10, 25, false);
+    drawText(press2Text, canvas.width - canvas.width / 15, canvas.height / 10, 25, true);
+    
+    
+    //console.log('startMenu run');
+    
+    requestAnimationFrame(startMenu);
+    
 }
 
 function gameloop() {
@@ -105,6 +143,8 @@ function drawText(text, x, y, ratio, rightAlign) {
     
     var textHeight = ctx.measureText('M').width, //The letter M is almost square so one can approximate the height of the text.
         textWidth = ctx.measureText(text).width;
+    
+    console.log("W: " + textWidth + " H: " + textHeight);
     
     y = y + textHeight;
     
