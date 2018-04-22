@@ -158,6 +158,7 @@ function gameloop() {
     move();
     collisionDetect();
     winCheck();
+    AI();
     //runs draw() function.
     draw();
     
@@ -263,6 +264,23 @@ function winCheck() {
         drawText('Press enter to restart.', 0, 0, 25, false);
         window.cancelAnimationFrame(gameloop);
     }
+}
+
+function AI() {
+    //Runs the AI code, which reads the ball position and acts if it is too close, but the paddle won't catch it.
+	if (ballX > canvas.width / 2 && ballXSpeed > 0) {
+		if (ballY + ballSize < p2YPos + (pHeight / 2) && p2YPos > (ballSize / 2)) {
+			p2YPos -= paddleSpeed * ballSize / 25;
+		} else if (ballY > p2YPos + (pHeight / 2) && p2YPos + pHeight < canvas.height - (ballSize / 2)) {
+			p2YPos += paddleSpeed * ballSize / 25;
+		}
+	} else if (ballX < canvas.width / 2.5) {
+		if (p2YPos + (pHeight / 5) > canvas.height * 3 / 4) {
+			p2YPos -= paddleSpeed * ballSize / 25;
+		} else if (p2YPos + (pHeight / 2) < canvas.height * 1 / 4) {
+			p2YPos += paddleSpeed * ballSize / 25;
+		}
+	}
 }
 
 function draw() {
