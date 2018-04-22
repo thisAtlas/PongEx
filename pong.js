@@ -1,6 +1,8 @@
+"use strict"; //JSLint syntax.
 //List of global variables used throughout the code. Most are simply declared, then later adjusted in settings().
 var canvas,
     ctx,
+    firstRun = true,
 //paddle variables
     pWidth,         //Paddle width.
     pHeight,        //Paddle height.
@@ -16,65 +18,67 @@ var canvas,
 //score and text variables
     score1,         //String for player1 score.
     score2,         //String for player2 score.
+    scoreToWin,     //Score needed to win the round.
     fontSize,       //Size of text.
-    press1Text,     //On-screen instructions
-    press2Text,     //On-screen instructions
-    player1Instr,   //On-screen instructions
-    player2Instr;   //On-screen instructions
+//movement variables
+    p1Up,           //
+    p1Down,         //
+    p2Up,           //
+    p2Down,         //
+    paddleSpeed;    //
+    
 
 function onload() {
-    "use strict";
     canvas = document.getElementById("canvas");    //Saves ref. to id:canvas in var
     ctx = canvas.getContext('2d');      //Creates a "CanvasRenderingContext2D"-object
     canvas.width = window.innerWidth;   //Sets canvas size to window size.
     canvas.height = window.innerHeight; // ^
     
-    defaultSettings();
-    variableSettings();
-    resizeCanvas();
+    settings();
     
-    window.addEventListener('resize', resizeCanvas); //EventListener for 'resize' of window. Runs resizeCanvas(). 
+    resizeCanvas();
     
     window.addEventListener("keydown", keyDownHandler);
     window.addEventListener("keyup", keyUpHandler);
     
-    startMenu();
+    
+    if (firstRun === true) {
+        console.log('onload() run successfully.');
+    }
+    
+    gameloop();
 }
 
-function defaultSettings() {
-    "use strict";
+function settings() {
+    pWidth = canvas.width / 250;
+    pHeight = canvas.height / 12;
     
-    press1Text = "Press '1' for singleplayer.";
-    press2Text = "Press '2' for multiplayer.";
-    player1Instr = "'W' to move up, 'S' to move down.";
-    player2Instr = "'Arrow-up' to move up, 'Arrow-down' to move down.";
-    
-    pHeight = canvas.height / 10;
+    xPadding = canvas.width / 100;
     p1YPos = (canvas.height / 2) - (pHeight / 2);
     p2YPos = (canvas.height / 2) - (pHeight / 2);
     
-    ballX = (canvas.width / 2);
-    ballY = (canvas.height / 2);
+    ballSize = pWidth; //1.2 times the width of the paddle.
+    ballX = (canvas.width / 2) - (ballSize / 2);
+    ballY = (canvas.height / 2) - (ballSize / 2);
     
-    score1 = 1;
-    score2 = 2;
+    score1 = score2 = 0;
+    scoreToWin = 10;
     
-    ballXSpeed = 2.5;
+    ballXSpeed = -2.5;
     ballYSpeed = -2.5;
-}
-
-function variableSettings() {
-    "use strict";
-    pWidth = canvas.width / 250;
-    pHeight = canvas.height / 10;
     
-    xPadding = canvas.width / 100;
+    p1Up = false;
+    p1Down = false;
+    p2Up = false;
+    p2Down = false;
+    paddleSpeed = ballSize / 2.5;
     
-    ballSize = pWidth * 1.2; //1.2 times the width of the paddle.
+    if (firstRun === true) {
+        console.log('settings() run successfully.');
+    }
 }
 
 function resizeCanvas() {
-    "use strict";
     //Fetches window size and updates canvas dimension variables.
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -83,41 +87,118 @@ function resizeCanvas() {
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     
-    variableSettings(); //Runs settings again to update sizes of objects.
+    if (firstRun === true) {
+        console.log('resizeCanvas run successfully.');
+    }
 }
 
 function keyDownHandler(e) {
-    "use strict";
-    
+    if (e.keyCode === 87) {
+        p1Up = true;
+        console.log("p1Up = true");
+    }
+    if (e.keyCode === 83) {
+        p1Down = true;
+        console.log("p1Down = true");
+    }
+    /*if (e.keyCode === 38) {
+        p2Up = true;
+        console.log("p2Up = true");
+    }
+    if (e.keyCode === 40) {
+        p2Down = true;
+        console.log("p2Down = true");
+    }*/
 }
 
-function keyUpHandler(e) {
-    "use strict";
-    
+function keyUpHandler(e) {   
+    if (e.keyCode === 87) {
+        p1Up = false;
+        console.log("p1Up = false");
+    }
+    if (e.keyCode === 83) {
+        p1Down = false;
+        console.log("p1Down = false");
+    }
+    /*if (e.keyCode === 38) {
+        p2Up = false;
+        console.log("p2Up = false");
+    }
+    if (e.keyCode === 40) {
+        p2Down = false;
+        console.log("p2Down = false");
+    }*/
 }
 
-function startMenu() {
-    "use strict";
+/*function startMenu() {
     draw();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     draw();
     drawInfo();
     
-    //requestAnimationFrame(startMenu);
-}
+    if(p1Active === true || p2Active === true) {
+        requestAnimationFrame(startMenu);
+    }
+}*/
 
 function gameloop() {
-    "use strict";
     //clears canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    draw();
     move();
+    draw();
+    
+    if (firstRun === true) {
+        console.log('gameloop() run successfully.');
+    }
+    
+    firstRun = false;
+    requestAnimationFrame(gameloop);
+}
+
+function ballMove() {
+    ballX += ballXSpeed;
+    ballY += ballYSpeed;
+    
+    if (ballY <= 0 || ballY + ballSize >= canvas.height) {
+        ballYSpeed = -ballYSpeed;
+    }
+    
+    if (firstRun === true) {
+        console.log('ballMove() run successfully.');
+    }
+}
+
+function paddleMove() {
+    if (p1Up === true && p1YPos - ballSize > 0) {
+        p1YPos -= paddleSpeed;
+    } else if (p1Down === true && p1YPos + pHeight < canvas.height - ballSize) {
+        p1YPos += paddleSpeed;
+    }
+    /*if (p2Up === true && p2YPos - ballSize > 0) {
+        p2YPos -= paddleSpeed;
+        console.log("p2Up = true");
+    } else if (p2Up === true && p2YPos + pHeight < canvas.height - ballSize) {
+        p2YPos += paddleSpeed;
+        console.log("p2Down = true");
+    }*/
+    
+    if (firstRun === true) {
+        console.log('paddleMove() run successfully.');
+    }
+}
+
+function move() {
+    ballMove();
+    paddleMove();
+    
+    if (firstRun === true) {
+        console.log("move() run successfully.");
+    }
 }
 
 function drawRect(cornerx, cornery, width, height) {
-    "use strict";
     ctx.beginPath();
     ctx.rect(cornerx, cornery, width, height);
     ctx.fillStyle = "#eeeeee";
@@ -125,7 +206,6 @@ function drawRect(cornerx, cornery, width, height) {
 }
 
 function drawLine(dash, space, x1, y1, x2, y2) {
-    "use strict";
     ctx.setLineDash([dash, space]);
     ctx.beginPath();
     ctx.strokeStyle = '#eeeeee';
@@ -135,33 +215,32 @@ function drawLine(dash, space, x1, y1, x2, y2) {
 }
 
 function drawText(text, x, y, ratio, rightAlign) {
-    "use strict";
     fontSize = canvas.height / ratio;
     
-    var textHeight = fontSize,
-        textWidth = ctx.measureText(text).width;
+    var textHeight = fontSize;
     
+    ctx.font = fontSize + 'px Arial';
     ctx.font = fontSize + 'px Nova Square';
     ctx.fillStyle = "#eeeeee";
     
+    var textWidth = ctx.measureText(text).width;
+    
     if (rightAlign !== true) {
-        ctx.fillText(text, x, y + textHeight);
+        ctx.fillText(text, x + 10, y + textHeight);
     } else {
-        ctx.fillText(text, x - textWidth, y + textHeight);
+        ctx.fillText(text, x - textWidth - 10, y + textHeight);
     }
 }
 
-function drawInfo() {
-    "use strict";
+/*function drawInfo() {
     drawText(press1Text, canvas.width / 15, canvas.height / 10, 40, false);
     drawText(press2Text, canvas.width - canvas.width / 15, canvas.height / 10, 40, true);
     
     drawText(player1Instr, canvas.width / 15, canvas.height / 10 + fontSize, 40, false);
     drawText(player2Instr, canvas.width - canvas.width / 15, canvas.height / 10 + fontSize, 40, true);
-}
+}*/
 
 function draw() {
-    "use strict";
     drawRect(xPadding, p1YPos, pWidth, pHeight); //Player1Paddle
     drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
     
@@ -169,21 +248,10 @@ function draw() {
     
     drawRect(ballX - (ballSize / 2), ballY - (ballSize / 2), ballSize, ballSize); //Ball
     
-    drawText(score1, canvas.width * 0.98 / 2, canvas.height / 100, 15, true); //player1 score
-    drawText(score2, canvas.width * 1.02 / 2, canvas.height / 100, 15, false); //player2 score
-}
-
-function ballMove() {
-    "use strict";
-    ballX += ballXSpeed;
-    ballY += ballYSpeed;
+    drawText(score1, canvas.width / 2, canvas.height / 100, 15, true); //player1 score
+    drawText(score2, canvas.width / 2, canvas.height / 100, 15, false); //player2 score
     
-    if (ballY <= 0 || ballY + ballSize >= canvas.height) {
-        ballYSpeed = -ballYSpeed;
+    if (firstRun === true) {
+        console.log('draw() run successfully.');
     }
-}
-
-function move() {
-    "use strict";
-    ballMove();
 }
