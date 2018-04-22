@@ -22,11 +22,11 @@ var canvas,
     winnerFound,    //Variable for determining if the round is over.
     fontSize,       //Size of text.
 //movement variables
-    p1Up,           //
-    p1Down,         //
-    p2Up,           //
-    p2Down,         //
-    paddleSpeed;    //
+    p1Up,           //If p1 is pressing 'up'.
+    p1Down,         //If p1 is pressing 'down'.
+    p2Up,           //If p2 is pressing 'up'.
+    p2Down,         //If p2 is pressing 'down'.
+    paddleSpeed;    //Speed of the paddles.
     
 
 function onload() {
@@ -40,7 +40,7 @@ function onload() {
     
     resizeCanvas();
     
-    window.addEventListener("keydown", keyDownHandler);
+    window.addEventListener("keydown", keyDownHandler); //EventListeners to record keypresses
     window.addEventListener("keyup", keyUpHandler);
     
     
@@ -48,10 +48,12 @@ function onload() {
         console.log('onload() run successfully.');
     }
     
+    //Once initial setup is complete, the main gameloop function runs.
     gameloop();
 }
 
 function defaultSettings() {
+    //Default size settings for various elements, speeds, so on.
     pWidth = canvas.width / 250;
     pHeight = canvas.height / 12;
     
@@ -80,6 +82,7 @@ function defaultSettings() {
 }
 
 function restartSettings() {
+    //Settings that need to be reset when a player scores a goal.
     ballX = (canvas.width / 2) - (ballSize / 2);
     ballY = (canvas.height / 2) - (ballSize / 2);
     
@@ -95,7 +98,7 @@ function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     
-    //Draws canvas background in side window
+    //Draws canvas background inside window.
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     
@@ -105,6 +108,7 @@ function resizeCanvas() {
 }
 
 function keyDownHandler(e) {
+    //Listens for keypresses on W, S, Arrow-up, Arrow-down, enter-key.
     if (e.keyCode === 87) {
         p1Up = true;
         console.log("p1Up = true");
@@ -122,6 +126,7 @@ function keyDownHandler(e) {
         console.log("p2Down = true");
     }
     if (e.keyCode === 13 && winnerFound == true) {
+        //Reloads page to restart the game.
         document.location.reload();
     }
 }
@@ -149,29 +154,45 @@ function gameloop() {
     //clears canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    //runs other looping functions.
     move();
     collisionDetect();
     winCheck();
-    
+    //runs draw() function.
     draw();
     
     if (firstRun === true) {
         console.log('gameloop() run successfully.');
     }
     
-    firstRun = false;
+    //As long as a winner isn't found, the gameloop repeats itself.
     if (winnerFound == false) {
         window.requestAnimationFrame(gameloop);
+    }
+    //sets firstRun to false to prevent spamming the console with console.logs.
+    firstRun = false;
+}
+
+function move() {
+    //Runs the other move functions.
+    ballMove();
+    paddleMove();
+    
+    if (firstRun === true) {
+        console.log("move() run successfully.");
     }
 }
 
 function ballMove() {
+    //Moves the ball element.
     ballX += ballXSpeed;
     ballY += ballYSpeed;
     
+    //Checks for vertical collisions with ball and canvas.
     if (ballY <= 0 + (ballSize / 2) || ballY + ballSize >= canvas.height - (ballSize / 2)) {
         ballYSpeed = -ballYSpeed;
     }
+    //Checks for horisontal collisions with canvas, which is also a player-goal.
     if (ballX <= 0 + (ballSize / 2)) {
         score2++;
         restartSettings();
@@ -187,6 +208,7 @@ function ballMove() {
 }
 
 function paddleMove() {
+    //Checks for keypress input and canvas collision, moves paddles.
     if (p1Up === true && p1YPos - (ballSize / 2) > 0) {
         p1YPos -= paddleSpeed;
     } else if (p1Down === true && p1YPos + pHeight < canvas.height - (ballSize / 2)) {
@@ -229,11 +251,13 @@ function winCheck() {
     ctx.textAlign = 'center';
     var winText; 
     
+    //Checks which player has won, determines which text should be shown on screen.
     if (score1 >= scoreToWin || score2 >= scoreToWin) {
         if(score1 > score2) {winText = 'Player 1 wins!'} else if (score1 < score2) {winText = 'Player 2 wins!'} else {winText = 'This was not supposed to happen.'}
         winnerFound = true;
     }
     
+    //If a winner is found, game stops (pauses) and winText is displayed.
     if (winnerFound == true) {
         ctx.fillText(winText, canvas.width / 2, canvas.height / 2);
         drawText('Press enter to restart.', 0, 0, 25, false);
@@ -241,16 +265,25 @@ function winCheck() {
     }
 }
 
-function move() {
-    ballMove();
-    paddleMove();
+function draw() {
+    //Function that draws most of the elements on screen.
+    drawRect(xPadding, p1YPos, pWidth, pHeight); //Player1Paddle
+    drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
+    
+    drawLine(12, 12, (canvas.width / 2), 0, (canvas.width / 2), canvas.height); //Vertical line
+    
+    drawRect(ballX - (ballSize / 2), ballY - (ballSize / 2), ballSize, ballSize); //Ball
+    
+    drawText(score1, canvas.width / 2, canvas.height / 100, 15, true); //player1 score
+    drawText(score2, canvas.width / 2, canvas.height / 100, 15, false); //player2 score
     
     if (firstRun === true) {
-        console.log("move() run successfully.");
+        console.log('draw() run successfully.');
     }
 }
 
 function drawRect(cornerx, cornery, width, height) {
+    //Draws a rectangle with the given parameters, top-left corner position, width and height of rectangle.
     ctx.beginPath();
     ctx.rect(cornerx, cornery, width, height);
     ctx.fillStyle = "#eeeeee";
@@ -258,6 +291,7 @@ function drawRect(cornerx, cornery, width, height) {
 }
 
 function drawLine(dash, space, x1, y1, x2, y2) {
+    //Draws a line with dash-length, space-length, start-point and end-point.
     ctx.setLineDash([dash, space]);
     ctx.beginPath();
     ctx.strokeStyle = '#eeeeee';
@@ -267,6 +301,7 @@ function drawLine(dash, space, x1, y1, x2, y2) {
 }
 
 function drawText(text, x, y, ratio, rightAlign) {
+    //Draws 'text' at given point, with a ratio to scale text with screen size. Rudimentary right-align function included.
     fontSize = canvas.height / ratio;
     ctx.textAlign = 'start';
     
@@ -282,21 +317,5 @@ function drawText(text, x, y, ratio, rightAlign) {
         ctx.fillText(text, x + 10, y + textHeight);
     } else {
         ctx.fillText(text, x - textWidth - 10, y + textHeight);
-    }
-}
-
-function draw() {
-    drawRect(xPadding, p1YPos, pWidth, pHeight); //Player1Paddle
-    drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
-    
-    drawLine(12, 12, (canvas.width / 2), 0, (canvas.width / 2), canvas.height); //Vertical line
-    
-    drawRect(ballX - (ballSize / 2), ballY - (ballSize / 2), ballSize, ballSize); //Ball
-    
-    drawText(score1, canvas.width / 2, canvas.height / 100, 15, true); //player1 score
-    drawText(score2, canvas.width / 2, canvas.height / 100, 15, false); //player2 score
-    
-    if (firstRun === true) {
-        console.log('draw() run successfully.');
     }
 }
