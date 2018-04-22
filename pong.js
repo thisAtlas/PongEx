@@ -64,7 +64,7 @@ function settings() {
     score1 = score2 = 0;
     scoreToWin = 10;
     
-    ballXSpeed = -2.5;
+    ballXSpeed = 2.5;
     ballYSpeed = -2.5;
     
     p1Up = false;
@@ -101,14 +101,14 @@ function keyDownHandler(e) {
         p1Down = true;
         console.log("p1Down = true");
     }
-    /*if (e.keyCode === 38) {
+    if (e.keyCode === 38) {
         p2Up = true;
         console.log("p2Up = true");
     }
     if (e.keyCode === 40) {
         p2Down = true;
         console.log("p2Down = true");
-    }*/
+    }
 }
 
 function keyUpHandler(e) {   
@@ -120,27 +120,15 @@ function keyUpHandler(e) {
         p1Down = false;
         console.log("p1Down = false");
     }
-    /*if (e.keyCode === 38) {
+    if (e.keyCode === 38) {
         p2Up = false;
         console.log("p2Up = false");
     }
     if (e.keyCode === 40) {
         p2Down = false;
         console.log("p2Down = false");
-    }*/
-}
-
-/*function startMenu() {
-    draw();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    draw();
-    drawInfo();
-    
-    if(p1Active === true || p2Active === true) {
-        requestAnimationFrame(startMenu);
     }
-}*/
+}
 
 function gameloop() {
     //clears canvas
@@ -176,22 +164,40 @@ function paddleMove() {
     } else if (p1Down === true && p1YPos + pHeight < canvas.height - ballSize) {
         p1YPos += paddleSpeed;
     }
-    /*if (p2Up === true && p2YPos - ballSize > 0) {
+    if (p2Up === true && p2YPos - ballSize > 0) {
         p2YPos -= paddleSpeed;
         console.log("p2Up = true");
-    } else if (p2Up === true && p2YPos + pHeight < canvas.height - ballSize) {
+    } else if (p2Down === true && p2YPos + pHeight < canvas.height - ballSize) {
         p2YPos += paddleSpeed;
         console.log("p2Down = true");
-    }*/
+    }
     
     if (firstRun === true) {
         console.log('paddleMove() run successfully.');
     }
 }
 
+function collisionDetect() {
+    //P1 collision detection
+    if (xPadding < ballX && ballX < xPadding + pWidth) {
+        ballXSpeed = -ballXSpeed;
+    }
+    
+    //P2 collision detection
+    if (canvas.width - xPadding - pWidth < ballX && ballX < canvas.width - xPadding) {
+        ballXSpeed = -ballXSpeed;
+    }
+    
+    if (firstRun === true) {
+        console.log("move() run successfully.");
+    }
+    
+}
+
 function move() {
     ballMove();
     paddleMove();
+    collisionDetect();
     
     if (firstRun === true) {
         console.log("move() run successfully.");
@@ -255,3 +261,4 @@ function draw() {
         console.log('draw() run successfully.');
     }
 }
+console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');
