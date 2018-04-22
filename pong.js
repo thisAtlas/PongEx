@@ -19,6 +19,7 @@ var canvas,
     score1,         //String for player1 score.
     score2,         //String for player2 score.
     scoreToWin,     //Score needed to win the round.
+    winnerFound,    //Variable for determining if the round is over.
     fontSize,       //Size of text.
 //movement variables
     p1Up,           //
@@ -34,7 +35,8 @@ function onload() {
     canvas.width = window.innerWidth;   //Sets canvas size to window size.
     canvas.height = window.innerHeight; // ^
     
-    settings();
+    defaultSettings();
+    restartSettings();
     
     resizeCanvas();
     
@@ -49,7 +51,7 @@ function onload() {
     gameloop();
 }
 
-function settings() {
+function defaultSettings() {
     pWidth = canvas.width / 250;
     pHeight = canvas.height / 12;
     
@@ -58,11 +60,10 @@ function settings() {
     p2YPos = (canvas.height / 2) - (pHeight / 2);
     
     ballSize = pWidth * 1.5; //Makes sure the ball size stays proportional to paddle size, which is proportional to canvas and thus window size.
-    ballX = (canvas.width / 2) - (ballSize / 2);
-    ballY = (canvas.height / 2) - (ballSize / 2);
     
     score1 = score2 = 0;
-    scoreToWin = 10;
+    scoreToWin = 3;
+    winnerFound = false;
     
     ballXSpeed = 2.5;
     ballYSpeed = -2.5;
@@ -71,10 +72,21 @@ function settings() {
     p1Down = false;
     p2Up = false;
     p2Down = false;
-    paddleSpeed = ballSize / 2.5;
+    paddleSpeed = ballSize / 2;
     
     if (firstRun === true) {
-        console.log('settings() run successfully.');
+        console.log('defaultSettings() run successfully.');
+    }
+}
+
+function restartSettings() {
+    ballX = (canvas.width / 2) - (ballSize / 2);
+    ballY = (canvas.height / 2) - (ballSize / 2);
+    
+    ballXSpeed = -ballXSpeed;
+    
+    if (firstRun === true) {
+        console.log('restartSettings() run successfully.');
     }
 }
 
@@ -108,6 +120,9 @@ function keyDownHandler(e) {
     if (e.keyCode === 40) {
         p2Down = true;
         console.log("p2Down = true");
+    }
+    if (e.keyCode === 13 && winnerFound == true) {
+        document.location.reload();
     }
 }
 
@@ -145,15 +160,25 @@ function gameloop() {
     }
     
     firstRun = false;
-    requestAnimationFrame(gameloop);
+    if (winnerFound == false) {
+        window.requestAnimationFrame(gameloop);
+    }
 }
 
 function ballMove() {
     ballX += ballXSpeed;
     ballY += ballYSpeed;
     
-    if (ballY <= 0 + (ballSize / 2) || ballY + (ballSize / 2) >= canvas.height - (ballSize / 2)) {
+    if (ballY <= 0 + (ballSize / 2) || ballY + ballSize >= canvas.height - (ballSize / 2)) {
         ballYSpeed = -ballYSpeed;
+    }
+    if (ballX <= 0 + (ballSize / 2)) {
+        score2++;
+        restartSettings();
+    }
+    if (ballX + ballSize >= canvas.width - (ballSize / 2)) {
+        score1++;
+        restartSettings();
     }
     
     if (firstRun === true) {
@@ -180,23 +205,40 @@ function paddleMove() {
 
 function collisionDetect() {
     //P1 collision detection
-    if (xPadding < ballX + (ballSize / 2) && ballX + (ballSize / 2) < xPadding + pWidth && p1YPos < ballY + (ballSize / 2) && ballY + (ballSize / 2) < p1YPos + pHeight) {
-        ballXSpeed = -ballXSpeed;
+    if (xPadding < ballX + (ballSize / 2) 
+        && ballX < xPadding + pWidth 
+        && p1YPos < ballY + (ballSize / 2) 
+        && ballY - (ballSize / 2) < p1YPos + pHeight) {
+            ballXSpeed = -ballXSpeed * 1.05;
     }
     
     //P2 collision detection
-    if (canvas.width - xPadding - pWidth < ballX + (ballSize / 2) && ballX + (ballSize / 2) < canvas.width - xPadding && p2YPos < ballY + (ballSize / 2) && ballY + (ballSize / 2) < p2YPos + pHeight) {
-        ballXSpeed = -ballXSpeed;
+    if (canvas.width - xPadding - pWidth < ballX + ballSize 
+        && ballX - (ballSize / 2) < canvas.width - xPadding 
+        && p2YPos < ballY + (ballSize / 2) 
+        && ballY + (ballSize / 2) < p2YPos + pHeight) {
+            ballXSpeed = -ballXSpeed * 1.05;
     }
     
     if (firstRun === true) {
         console.log("move() run successfully.");
     }
-    
 }
 
 function winCheck() {
+    ctx.textAlign = 'center';
+    var winText; 
     
+    if (score1 >= scoreToWin || score2 >= scoreToWin) {
+        if(score1 > score2) {winText = 'Player 1 wins!'} else if (score1 < score2) {winText = 'Player 2 wins!'} else {winText = 'This was not supposed to happen.'}
+        winnerFound = true;
+    }
+    
+    if (winnerFound == true) {
+        ctx.fillText(winText, canvas.width / 2, canvas.height / 2);
+        drawText('Press enter to restart.', 0, 0, 25, false);
+        window.cancelAnimationFrame(gameloop);
+    }
 }
 
 function move() {
@@ -226,6 +268,7 @@ function drawLine(dash, space, x1, y1, x2, y2) {
 
 function drawText(text, x, y, ratio, rightAlign) {
     fontSize = canvas.height / ratio;
+    ctx.textAlign = 'start';
     
     var textHeight = fontSize;
     
