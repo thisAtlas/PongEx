@@ -57,7 +57,7 @@ function settings() {
     p1YPos = (canvas.height / 2) - (pHeight / 2);
     p2YPos = (canvas.height / 2) - (pHeight / 2);
     
-    ballSize = pWidth; //1.2 times the width of the paddle.
+    ballSize = pWidth * 1.5; //Makes sure the ball size stays proportional to paddle size, which is proportional to canvas and thus window size.
     ballX = (canvas.width / 2) - (ballSize / 2);
     ballY = (canvas.height / 2) - (ballSize / 2);
     
@@ -88,7 +88,7 @@ function resizeCanvas() {
     ctx.rect(0, 0, canvas.width, canvas.height);
     
     if (firstRun === true) {
-        console.log('resizeCanvas run successfully.');
+        console.log('resizeCanvas() run successfully.');
     }
 }
 
@@ -135,6 +135,9 @@ function gameloop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     move();
+    collisionDetect();
+    winCheck();
+    
     draw();
     
     if (firstRun === true) {
@@ -149,7 +152,7 @@ function ballMove() {
     ballX += ballXSpeed;
     ballY += ballYSpeed;
     
-    if (ballY <= 0 || ballY + ballSize >= canvas.height) {
+    if (ballY <= 0 + (ballSize / 2) || ballY + (ballSize / 2) >= canvas.height - (ballSize / 2)) {
         ballYSpeed = -ballYSpeed;
     }
     
@@ -159,17 +162,15 @@ function ballMove() {
 }
 
 function paddleMove() {
-    if (p1Up === true && p1YPos - ballSize > 0) {
+    if (p1Up === true && p1YPos - (ballSize / 2) > 0) {
         p1YPos -= paddleSpeed;
-    } else if (p1Down === true && p1YPos + pHeight < canvas.height - ballSize) {
+    } else if (p1Down === true && p1YPos + pHeight < canvas.height - (ballSize / 2)) {
         p1YPos += paddleSpeed;
     }
-    if (p2Up === true && p2YPos - ballSize > 0) {
+    if (p2Up === true && p2YPos - (ballSize / 2) > 0) {
         p2YPos -= paddleSpeed;
-        console.log("p2Up = true");
-    } else if (p2Down === true && p2YPos + pHeight < canvas.height - ballSize) {
+    } else if (p2Down === true && p2YPos + pHeight < canvas.height - (ballSize / 2)) {
         p2YPos += paddleSpeed;
-        console.log("p2Down = true");
     }
     
     if (firstRun === true) {
@@ -179,12 +180,12 @@ function paddleMove() {
 
 function collisionDetect() {
     //P1 collision detection
-    if (xPadding < ballX && ballX < xPadding + pWidth) {
+    if (xPadding < ballX + (ballSize / 2) && ballX + (ballSize / 2) < xPadding + pWidth && p1YPos < ballY + (ballSize / 2) && ballY + (ballSize / 2) < p1YPos + pHeight) {
         ballXSpeed = -ballXSpeed;
     }
     
     //P2 collision detection
-    if (canvas.width - xPadding - pWidth < ballX && ballX < canvas.width - xPadding) {
+    if (canvas.width - xPadding - pWidth < ballX + (ballSize / 2) && ballX + (ballSize / 2) < canvas.width - xPadding && p2YPos < ballY + (ballSize / 2) && ballY + (ballSize / 2) < p2YPos + pHeight) {
         ballXSpeed = -ballXSpeed;
     }
     
@@ -194,10 +195,13 @@ function collisionDetect() {
     
 }
 
+function winCheck() {
+    
+}
+
 function move() {
     ballMove();
     paddleMove();
-    collisionDetect();
     
     if (firstRun === true) {
         console.log("move() run successfully.");
@@ -238,14 +242,6 @@ function drawText(text, x, y, ratio, rightAlign) {
     }
 }
 
-/*function drawInfo() {
-    drawText(press1Text, canvas.width / 15, canvas.height / 10, 40, false);
-    drawText(press2Text, canvas.width - canvas.width / 15, canvas.height / 10, 40, true);
-    
-    drawText(player1Instr, canvas.width / 15, canvas.height / 10 + fontSize, 40, false);
-    drawText(player2Instr, canvas.width - canvas.width / 15, canvas.height / 10 + fontSize, 40, true);
-}*/
-
 function draw() {
     drawRect(xPadding, p1YPos, pWidth, pHeight); //Player1Paddle
     drawRect(canvas.width - xPadding - pWidth, p2YPos, pWidth, pHeight); //Player2Paddle
@@ -261,4 +257,3 @@ function draw() {
         console.log('draw() run successfully.');
     }
 }
-console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');console.log('draw() run successfully.');
